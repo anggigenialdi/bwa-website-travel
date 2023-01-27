@@ -44,15 +44,24 @@ async function addCategory(req, res) {
 
 }
 async function deleteCategory(req, res) {
-  const {
-    id
-  } = req.params;
-  const category = await Category.findOne({
-    _id: id
-  })
+  try {
+    const {
+      id
+    } = req.params;
+    const category = await Category.findOne({
+      _id: id
+    })
+    await category.remove();
+    req.flash('alertMessage', 'Succes Delete Data')
+    req.flash('alertStatus', 'success')
+    res.redirect('/admin/category')
 
-  await category.remove();
-  res.redirect('/admin/category')
+  } catch (error) {
+    req.flash('alertMessage', `$error.message`)
+    req.flash('alertStatus', 'danger')
+    res.redirect('/admin/category')
+  }
+
 }
 
 async function editCategory(req, res) {
@@ -113,6 +122,8 @@ async function addBank(req, res) {
     console.log(error);
     req.flash('alertMessage', `$error.message`)
     req.flash('alertStatus', 'danger')
+    res.redirect('/admin/bank');
+
   }
 }
 
@@ -124,11 +135,12 @@ async function editBank(req, res) {
       nameBank,
       nomorRekening
     } = req.body;
-  
+
     const bank = await Bank.findOne({
       _id: id
     })
-    if(req.file == undefined){
+
+    if (req.file == undefined) {
       bank.name = name;
       bank.nameBank = nameBank;
       bank.nomorRekening = nomorRekening;
@@ -137,19 +149,47 @@ async function editBank(req, res) {
       req.flash('alertStatus', 'success')
       res.redirect('/admin/bank');
     } else {
-      fs.unlink(path.join(`src/public/${bank.imageUrl}`));
+      fs.unlinkSync(`src/public/${bank.imageUrl}`);
       bank.name = name;
       bank.nameBank = nameBank;
       bank.nomorRekening = nomorRekening;
       bank.imageUrl = `images/${req.file.filename}`;
       await bank.save();
+      req.flash('alertMessage', 'Succes Update Bank')
+      req.flash('alertStatus', 'success')
+      res.redirect('/admin/bank');
     }
   } catch (error) {
     console.log(error);
     req.flash('alertMessage', `$error.message`)
     req.flash('alertStatus', 'danger')
+    res.redirect('/admin/bank');
+
   }
 
+}
+
+async function deleteBank(req, res) {
+  try {
+    const {
+      id
+    } = req.params;
+    const bank = await Bank.findOne({
+      _id: id
+    })
+    fs.unlinkSync(`src/public/${bank.imageUrl}`);
+    await bank.remove();
+    req.flash('alertMessage', 'Succes Delete Data Bank')
+    req.flash('alertStatus', 'success')
+    res.redirect('/admin/bank');
+
+  } catch (error) {
+    console.log(error);
+    req.flash('alertMessage', `$error.message`)
+    req.flash('alertStatus', 'danger')
+    res.redirect('/admin/bank');
+
+  }
 }
 
 
@@ -172,5 +212,6 @@ module.exports = {
   viewBooking,
   deleteCategory,
   editCategory,
-  addBank
+  addBank,
+  deleteBank
 }

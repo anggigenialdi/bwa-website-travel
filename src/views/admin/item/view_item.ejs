@@ -21,7 +21,20 @@
 
         <!-- Page Heading -->
         <h1 class="h3 mb-4 text-gray-800">Item page</h1>
-        <%- include('table.ejs') %>
+        <ul class="nav nav-tabs" id="myTab" role="tablist">
+          <li class="nav-item">
+            <a class="nav-link active" id="home-tab" data-toggle="tab" href="#show-item" role="tab"
+              aria-controls="show-item" aria-selected="true">Show Item</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" id="profile-tab" data-toggle="tab" href="#add-item" role="tab" aria-controls="add-item"
+              aria-selected="false">Add</a>
+          </li>
+        </ul>
+        <div class="tab-content" id="myTabContent">
+          <%- include('show_table.ejs') %>
+          <%- include('add_item.ejs') %>
+        </div>
 
       </div>
       <!-- /.container-fluid -->
@@ -63,4 +76,15 @@
     </div>
   </div>
 </div>
+
 <%- include('../../partials/js.ejs') %>
+<script>
+  ClassicEditor
+          .create( document.querySelector( '#about' ) )
+          .then( editor => {
+                  console.log( editor );
+          } )
+          .catch( error => {
+                  console.error( error );
+          } );
+</script>

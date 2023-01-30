@@ -1,4 +1,5 @@
 const mongoose = require('mongoose')
+const { objectId } = mongoose.Schema;
 
 const featureSchema = new mongoose.Schema({
   name: {
@@ -13,6 +14,10 @@ const featureSchema = new mongoose.Schema({
     type: String,
     required: true
   },
+  itemId: {
+    type: objectId,
+    ref: Item
+  }
 })
 
 const Feature = mongoose.model('Feature', categorySchema);

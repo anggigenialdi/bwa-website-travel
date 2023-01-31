@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 const { objectId } =mongoose.Schema;
-const Schema =mongoose.Schema;
+const Schema = mongoose.Schema;
+
 
 const categorySchema = new mongoose.Schema({
-  name: {
+  name: { 
     type: String,
   },
   itemId: [{

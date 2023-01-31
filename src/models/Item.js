@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 const { objectId } = mongoose.Schema;
+const Schema = mongoose.Schema;
+
 
 const itemSchema = new mongoose.Schema({
   title: {
@@ -21,24 +23,24 @@ const itemSchema = new mongoose.Schema({
   isPopular: {
     type: Boolean,
   },
-  desriptino: {
+  description: {
     type: String,
     required: true,
   },
   categoryId: {
-    type : objectId,
+    type : Schema.Types.ObjectId,
     ref: 'Category'
   },
   imageId: [{
-    type: objectId,
+    type : Schema.Types.ObjectId,
     ref: 'Image'
   }],
   featureId: [{
-    type: objectId,
+    type : Schema.Types.ObjectId,
     ref: 'Feature'
   }],
   activityId: [{
-    type: objectId,
+    type : Schema.Types.ObjectId,
     ref: 'Activity'
   }]
 })

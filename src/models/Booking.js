@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const { objectId } = mongoose.Schema;
+const Schema = mongoose.Schema;
 
 
 const BookingSchema = new mongoose.Schema({
@@ -13,7 +14,8 @@ const BookingSchema = new mongoose.Schema({
   },
   itmeId: [{
     _id: {
-      type: objectId,
+      // type: objectId,
+      type : Schema.Types.ObjectId,
       ref: 'Item'
     },
     price: {
@@ -26,11 +28,11 @@ const BookingSchema = new mongoose.Schema({
     }
   }],
   memberId: [{
-    type: objectId,
+    type : Schema.Types.ObjectId,
     ref: 'Member'
   }],
   bankId: [{
-    type: objectId,
+    type : Schema.Types.ObjectId,
     ref: 'Bank'
   }],
   proofPayment: {

@@ -19,12 +19,14 @@
           <label for="name">Category</label>
           <select name="categoryId" class="form-control">
             <option value="">-- Category --</option>
-            <option value="">get from db</option>
+            <% for(let i = 0; i< category.length; i++){ %>
+            <option value="<%= category[i].id %>"><%= category[i].name  %></option>
+            <% } %>
           </select>
-        </div> 
+        </div>
         <div class="form-group">
           <label for="name">Image</label>
-          <input type="ile" class="form-control" name="image" multiple required>
+          <input type="file" class="form-control" name="image" multiple required>
         </div>
         <div class="form-group">
           <label for="name">Description</label>

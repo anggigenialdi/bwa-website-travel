@@ -2,6 +2,8 @@ const mongoose = require('mongoose')
 const {
   objectId
 } = mongoose.Schema;
+const Schema = mongoose.Schema;
+
 
 
 const activitySchema = new mongoose.Schema({
@@ -21,7 +23,8 @@ const activitySchema = new mongoose.Schema({
     type: Boolean,
   },
   itemId: {
-    type: objectId,
+    // type: objectId,
+    type : Schema.Types.ObjectId,
     ref: Item
   }
 })

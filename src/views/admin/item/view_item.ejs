@@ -18,6 +18,11 @@
 
       <!-- Begin Page Content -->
       <div class="container-fluid">
+        <% if(alert.message != "") { %>
+        <div class="alert alert-<%= alert.status %>" role="alert">
+          <%= alert.message %>
+        </div>
+        <% } %>
 
         <!-- Page Heading -->
         <h1 class="h3 mb-4 text-gray-800">Item page</h1>
@@ -80,11 +85,11 @@
 <%- include('../../partials/js.ejs') %>
 <script>
   ClassicEditor
-          .create( document.querySelector( '#about' ) )
-          .then( editor => {
-                  console.log( editor );
-          } )
-          .catch( error => {
-                  console.error( error );
-          } );
+    .create(document.querySelector('#about'))
+    .then(editor => {
+      console.log(editor);
+    })
+    .catch(error => {
+      console.error(error);
+    });
 </script>

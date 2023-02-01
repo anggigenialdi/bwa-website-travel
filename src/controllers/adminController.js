@@ -204,11 +204,20 @@ async function viewItem(req, res) {
       status: alertStatus
     }
 
+    const item = await Item.find().populate({
+      path: `imageId`,
+      select: `id imageUrl`
+    }).populate({
+      path: `categoryId`,
+      select: `id name`
+    });
     const category = await Category.find();
     res.render('admin/item/view_item', {
       title: "Staycation | Item",
       category,
       alert,
+      item,
+      action: "view"
     });
 
 
@@ -240,15 +249,19 @@ async function addItem(req, res) {
         price,
         city
       }
-      const item = await  Item.create(newItem);
+      const item = await Item.create(newItem);
       category.itemId.push({
         _id: item._id
       });
       await category.save();
-      
+
       for (let i = 0; i < req.files.length; i++) {
-        const imageSave = await Image.create({ imageUrl: `images/${req.files[i].filename}`});
-        item.imageId.push({ _id: imageSave._id });
+        const imageSave = await Image.create({
+          imageUrl: `images/${req.files[i].filename}`
+        });
+        item.imageId.push({
+          _id: imageSave._id
+        });
         await item.save();
       }
       req.flash('alertMessage', 'Succes Add Items')
@@ -265,6 +278,41 @@ async function addItem(req, res) {
   }
 }
 
+async function showImageItem(req, res) {
+  try {
+    const {
+      id
+    } = req.params;
+    const alertMessage = req.flash('alertMessage');
+    const alertStatus = req.flash('alertStatus');
+    const alert = {
+      message: alertMessage,
+      status: alertStatus
+    }
+
+    const item = await Item.findOne({
+        _id: id
+      })
+      .populate({
+        path: `imageId`,
+        select: `id imageUrl`
+      });
+    res.render('admin/item/view_item', {
+      title: "Staycation | View Image",
+      alert,
+      item,
+      action: "show image",
+    });
+
+  } catch (error) {
+    console.log(error);
+    req.flash('alertMessage', error.message)
+    req.flash('alertStatus', 'danger')
+    res.redirect('/admin/item');
+  }
+
+}
+
 function viewBooking(req, res) {
   res.render('admin/booking/view_booking');
 }
@@ -278,6 +326,7 @@ module.exports = {
   editBank,
   viewItem,
   addItem,
+  showImageItem,
   viewBooking,
   deleteCategory,
   editCategory,

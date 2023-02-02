@@ -313,6 +313,47 @@ async function showImageItem(req, res) {
 
 }
 
+async function showEditItem(req, res) {
+  try {
+    const {
+      id
+    } = req.params;
+    const alertMessage = req.flash('alertMessage');
+    const alertStatus = req.flash('alertStatus');
+    const alert = {
+      message: alertMessage,
+      status: alertStatus
+    }
+
+    const item = await Item.findOne({
+        _id: id
+      })
+      .populate({
+        path: `imageId`,
+        select: `id imageUrl`
+      }).populate({
+        path: `categoryId`,
+        select: `id name`
+      });
+    const category = await Category.find();
+
+    res.render('admin/item/view_item', {
+      title: "Staycation | Edit Item",
+      category,
+      alert,
+      item,
+      action: "edit",
+    });
+
+  } catch (error) {
+    console.log(error);
+    req.flash('alertMessage', error.message)
+    req.flash('alertStatus', 'danger')
+    res.redirect('/admin/item');
+  }
+
+}
+
 function viewBooking(req, res) {
   res.render('admin/booking/view_booking');
 }
@@ -327,6 +368,7 @@ module.exports = {
   viewItem,
   addItem,
   showImageItem,
+  showEditItem,
   viewBooking,
   deleteCategory,
   editCategory,

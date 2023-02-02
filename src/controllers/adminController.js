@@ -418,6 +418,45 @@ async function editItem(req, res) {
   }
 }
 
+async function deleteItem(req, res) {
+  try {
+    const {
+      id
+    } = req.params;
+    const item = await Item.findOne({
+      _id: id
+    }).populate('imageId');
+    for (let i = 0; i < item.imageId.length; i++) {
+      Image.findOne({
+        _id: item.imageId[i]._id
+      }).then((image) => {
+
+        fs.unlinkSync(`src/public/${image.imageUrl}`);
+        image.remove();
+
+      }).catch((error) => {
+        console.log(error);
+        req.flash('alertMessage', error.message)
+        req.flash('alertStatus', 'danger')
+        res.redirect('/admin/item');
+      });
+    }
+
+    await item.remove();
+
+    req.flash('alertMessage', 'Succes Delete Items')
+    req.flash('alertStatus', 'success')
+    res.redirect('/admin/item');
+
+  } catch (error) {
+    console.log(error);
+    req.flash('alertMessage', error.message)
+    req.flash('alertStatus', 'danger')
+    res.redirect('/admin/item');
+  }
+
+}
+
 function viewBooking(req, res) {
   res.render('admin/booking/view_booking');
 }
@@ -434,6 +473,9 @@ module.exports = {
   showImageItem,
   showEditItem,
   editItem,
+  deleteItem,
+
+
   viewBooking,
   deleteCategory,
   editCategory,

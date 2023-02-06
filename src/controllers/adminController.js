@@ -457,6 +457,26 @@ async function deleteItem(req, res) {
 
 }
 
+async function viewDetailItem(req, res) {
+  try {
+    const alertMessage = req.flash('alertMessage');
+    const alertStatus = req.flash('alertStatus');
+    const alert = {
+      message: alertMessage,
+      status: alertStatus
+    };
+    const { itemId } = req.params;
+    res.render('admin/item/detail_item/view_detail_item', {
+      title: 'Staycation | Detail Item',
+      alert,
+    })
+  } catch (error) {
+    req.flash('alertMessage', error.message)
+    req.flash('alertStatus', 'danger')
+    res.redirect(`/admin/item/show-detail-item/${itemId}`);
+  }
+}
+
 function viewBooking(req, res) {
   res.render('admin/booking/view_booking');
 }
@@ -474,6 +494,7 @@ module.exports = {
   showEditItem,
   editItem,
   deleteItem,
+  viewDetailItem,
 
 
   viewBooking,

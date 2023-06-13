@@ -4,27 +4,28 @@
     <div class="card-body">
       <div class="row">
         <div class="col-md-5">
-          <form action="/admin/bank" method="POST" enctype="multipart/form-data">
-              <div class="form-group">
-                <label for="exampleInputEmail1">Name</label>
-                <input type="text" class="form-control" id="name" aria-describedby="name" placeholder="Enter Name"
-                  name="name" required>
-              </div>
-              <div class="form-group">
-                <label for="exampleInputEmail1">QTY</label>
-                <input type="number" class="form-control" id="qty" aria-describedby="qty" placeholder="Enter qty"
-                  name="qty" required>
-              </div>
-              <div class="form-group">
-                <label for="exampleInputEmail1">Image</label>
-                <input type="file" class="form-control" id="image" aria-describedby="image" name="image" required>
-              </div>
-              <button type="submit" class="btn btn-primary">save</button>
+          <form action="/admin/item/add/feature" method="POST" enctype="multipart/form-data">
+            <div class="form-group">
+              <label for="exampleInputEmail1">Name</label>
+              <input type="text" class="form-control" id="name" aria-describedby="name" placeholder="Enter Name"
+                name="name" required>
+            </div>
+            <div class="form-group">
+              <label for="exampleInputEmail1">QTY</label>
+              <input type="number" class="form-control" id="qty" aria-describedby="qty" placeholder="Enter qty"
+                name="qty" required>
+            </div>
+            <div class="form-group">
+              <label for="exampleInputEmail1">Image</label>
+              <input type="file" class="form-control" id="image" aria-describedby="image" name="image" required>
+            </div>
+            <input type="hidden" value="<%= itemId %>" name="itemId">
+            <button type="submit" class="btn btn-primary">save</button>
           </form>
         </div>
         <div class="col-md-7">
           <div class="table-responsive">
-            <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+            <table class="table table-bordered" id="dataTableAFeature" width="100%" cellspacing="0">
               <thead>
                 <tr>
                   <th>No</th>
@@ -35,6 +36,24 @@
                 </tr>
               </thead>
               <tbody>
+                <% for(let i = 0; i < feature.length; i++) { %>
+                <tr>
+                  <td><%= i + 1 %></td>
+                  <td><%= feature[i].name %></td>
+                  <td><%= feature[i].qty %></td>
+                  <td>
+                    <img src="/<%= feature[i].imageUrl %>" alt="imageUrl" width="70px">
+                  </td>
+                  <td>
+                    <form action="/admin/feature/<%= feature[i].id %>?_method=DELETE" method="POST">
+                      <a href="javascript:void();" type="button" class="btn btn-warning btn-circle btn-sm button-update"
+                        data-id="<%= feature[i].id %>" data-name="<%= feature[i].name %>" data-qty="<%= feature[i].qty %>">
+                          <i class="fas fa-edit"></i></a>
+                        <button type="submit" class="btn btn-danger btn-circle btn-sm"><i class="fas fa-trash"></i></button>
+                      </form>
+                    </td>
+                  </tr>
+                  <% } %>
               </tbody>
             </table>
           </div>

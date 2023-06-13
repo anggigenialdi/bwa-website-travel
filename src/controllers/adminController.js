@@ -4,6 +4,10 @@ const Item = require('../models/Item');
 const Image = require('../models/Image');
 const path = require("path");
 const fs = require("fs");
+const Feature = require('../models/Feature');
+const {
+  log
+} = require('console');
 
 function viewDashboard(req, res) {
   res.render('admin/dashboard/view_dashboard');
@@ -458,6 +462,10 @@ async function deleteItem(req, res) {
 }
 
 async function viewDetailItem(req, res) {
+  const {
+    itemId
+  } = req.params;
+
   try {
     const alertMessage = req.flash('alertMessage');
     const alertStatus = req.flash('alertStatus');
@@ -465,16 +473,109 @@ async function viewDetailItem(req, res) {
       message: alertMessage,
       status: alertStatus
     };
-    const { itemId } = req.params;
+
+    const feature = await Feature.find({
+      itemId: itemId
+    });
+
     res.render('admin/item/detail_item/view_detail_item', {
       title: 'Staycation | Detail Item',
       alert,
+      itemId,
+      feature
     })
   } catch (error) {
+    console.log(error);
     req.flash('alertMessage', error.message)
     req.flash('alertStatus', 'danger')
     res.redirect(`/admin/item/show-detail-item/${itemId}`);
   }
+}
+
+async function addFeature(req, res) {
+  const {
+    name,
+    qty,
+    itemId,
+  } = req.body;
+  try {
+
+    if (!req.file) {
+      req.flash('alertMessage', 'image not found')
+      req.flash('alertStatus', 'danger')
+      res.redirect(`/admin/item/show-detail-item/${itemId}`);
+    }
+    const feature = await Feature.create({
+      name,
+      qty,
+      itemId,
+      imageUrl: `images/${req.file.filename}`
+
+    });
+
+    const item = await Item.findOne({
+      _id: itemId
+    });
+    item.featureId.push({
+      _id: feature._id
+    });
+    await item.save();
+
+    req.flash('alertMessage', 'Succes Add Feature')
+    req.flash('alertStatus', 'success')
+    res.redirect(`/admin/item/show-detail-item/${itemId}`);
+
+  } catch (error) {
+    console.log(error);
+    req.flash('alertMessage', `$error.message`)
+    req.flash('alertStatus', 'danger')
+    res.redirect(`/admin/item/show-detail-item/${itemId}`);
+
+  }
+}
+
+async function editFeature(req, res) {
+  const {
+    id,
+    name,
+    qty,
+    itemId
+  } = req.body;
+
+  try {
+
+    const feature = await Feature.findOne({
+      _id: id
+    })
+
+    if (req.file == undefined) {
+      feature.name = name;
+      feature.qty = qty;
+      await feature.save();
+      req.flash('alertMessage', 'Succes Update Feature')
+      req.flash('alertStatus', 'success')
+      res.redirect(`/admin/item/show-detail-item/${itemId}`);
+
+    } else {
+      fs.unlinkSync(`src/public/${feature.imageUrl}`);
+      feature.name = name;
+      feature.qty = qty;
+      feature.imageUrl = `images/${req.file.filename}`;
+      await feature.save();
+      req.flash('alertMessage', 'Succes Update Feature')
+      req.flash('alertStatus', 'success')
+      res.redirect(`/admin/item/show-detail-item/${itemId}`);
+
+    }
+  } catch (error) {
+    console.log(error);
+    req.flash('alertMessage', `$error.message`)
+    req.flash('alertStatus', 'danger')
+    res.redirect(`/admin/item/show-detail-item/${itemId}`);
+
+
+  }
+
 }
 
 function viewBooking(req, res) {
@@ -501,5 +602,7 @@ module.exports = {
   deleteCategory,
   editCategory,
   addBank,
-  deleteBank
+  deleteBank,
+  addFeature,
+  editFeature
 }

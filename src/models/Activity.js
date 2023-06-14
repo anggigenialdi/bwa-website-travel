@@ -12,7 +12,7 @@ const activitySchema = new mongoose.Schema({
     required: true
   },
   type: {
-    type: Number,
+    type: String,
     required: true
   },
   imageUrl: {
@@ -25,7 +25,7 @@ const activitySchema = new mongoose.Schema({
   itemId: {
     // type: objectId,
     type : Schema.Types.ObjectId,
-    ref: Item
+    ref: 'Item'
   }
 })
 const Activity = mongoose.model('Activity', activitySchema);

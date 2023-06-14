@@ -578,6 +578,39 @@ async function editFeature(req, res) {
 
 }
 
+async function deleteFeature(req, res) {
+  const {
+    id,
+    itemId
+  } = req.params;
+  try {
+
+    const feature = await Feature.findOne({
+      _id: id
+    })
+    const item = await Item.findOne({ _id: itemId }).populate('featureId');
+    for (let i = 0; i < item.featureId.length; i++) {
+      if (item.featureId[i]._id.toString() === feature._id.toString() ) {
+        item.featureId.pull({ _id: feature._id });
+        await item.save();
+        
+      }
+    }
+    fs.unlinkSync(`src/public/${feature.imageUrl}`);
+    await feature.remove();
+    req.flash('alertMessage', 'Succes Delete Data Feature')
+    req.flash('alertStatus', 'success')
+    res.redirect(`/admin/item/show-detail-item/${itemId}`);
+
+  } catch (error) {
+    console.log(error);
+    req.flash('alertMessage', `$error.message`)
+    req.flash('alertStatus', 'danger')
+    res.redirect(`/admin/item/show-detail-item/${itemId}`);
+
+  }
+}
+
 function viewBooking(req, res) {
   res.render('admin/booking/view_booking');
 }
@@ -604,5 +637,6 @@ module.exports = {
   addBank,
   deleteBank,
   addFeature,
-  editFeature
+  editFeature,
+  deleteFeature
 }
